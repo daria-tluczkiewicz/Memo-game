@@ -1,0 +1,60 @@
+$gridgap: 20px;
+
+#root {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 2rem;
+  text-align: center;
+}
+* {
+  box-sizing: border-box;
+}
+.grid-container {
+  display: flex;
+  flex-direction: column;
+  height: 400px;
+  width: 400px;
+  gap: $gridgap;
+}
+
+.vertical-container {
+  gap: $gridgap;
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  height: 100%;
+
+  .symbol-holder {
+    display: flex;
+    background-color: white;
+    border-radius: 5px;
+    width: 100%;
+    height: 100%;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+
+    &.correct {
+      background-color: #72e372;
+  
+      svg {
+        visibility: visible;
+      }
+    }
+    &.reveal {
+      transform: rotateY(180deg);
+      svg {
+        transform: rotateY(180deg);
+        visibility: visible;
+      }
+    }
+  
+    &.wrong {
+      background-color: chocolate;
+    }
+
+    svg {
+      visibility: hidden;
+    }
+  }
+}
