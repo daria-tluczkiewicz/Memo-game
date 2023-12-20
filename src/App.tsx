@@ -1,138 +1,127 @@
 // import { useState } from 'react'
-import { BaseSyntheticEvent, useEffect, useRef, useState} from 'react';
+import { useState } from 'react';
 import './App.scss'
 import axios from 'axios';
-import { iconsArray } from './icons';
-import { hexArray } from './icons';
+import { iconsArray } from './ENUMS';
+import { hexColor } from './ENUMS';
+import Grid from './Grid';
 
 function App() {
-  const [tiles, setTiles] = useState<string[]>([])
-  const pair = useRef<string[]>([])
-  const revealedTiles = useRef<HTMLDivElement[]>([]);
-  const progress = useRef<number>(0);
+  const [icons, setIcons] = useState<{image: string, id: number}[]>([])
   const [isGameActive, setIsGameActive] = useState<boolean>(false)
-
-  useEffect(()=>{},[tiles])
   
-  function createGrid(gridSize: number) {
-    const grid: Array<Array<string>> = [];
-    const dbsymbols = tiles.concat(tiles)
+  //
+  // const revealedicons = useRef<HTMLDivElement[]>([]);
+  // const progress = useRef<number>(0);
+  // const [isFlipped, setIsFlipped] = useState<boolean>(false)
+
+  // useEffect(()=>{},[icons])
   
-    for (let x = 0; x < gridSize; x++){
-      grid[x] = []
+  // function createGrid(gridSize: number) {
+  //   const grid: Array<Array<string>> = [];
+  //   const fullicons = icons.concat(icons)
+  
+  //   for (let x = 0; x < gridSize; x++){
+  //     grid[x] = []
 
-      for (let y = 0; y < gridSize; y++){
-        const index: number = Math.floor(Math.random() * dbsymbols.length) 
-        grid[x].push(dbsymbols[index])
-        dbsymbols.splice(index, 1)
-      }
-    }
-    return grid
-  }
+  //     for (let y = 0; y < gridSize; y++){
+  //       const index: number = Math.floor(Math.random() * fullicons.length) 
+  //       grid[x].push(fullicons[index])
+  //       fullicons.splice(index, 1)
+  //     }
+  //   }
+  //   return grid
+  // }
 
 
 
-  function revealSymbol(event: BaseSyntheticEvent) {
-    const pairLength = pair.current?.length || 0;
+  // function revealSymbol(event: BaseSyntheticEvent) {
+  //   const pairLength = pair.current?.length || 0;
 
-    if (pairLength === 0) {
-      revealedTiles.current = [event.target]
-    }
-    if (pairLength === 1) {
-      revealedTiles.current = revealedTiles.current?.concat(event.target)
-      compareSymbols(revealedTiles.current)
-    }
+  //   if (pairLength === 0) {
+  //     revealedicons.current = [event.target]
+  //   }
+  //   if (pairLength === 1) {
+  //     revealedicons.current = revealedicons.current?.concat(event.target)
+  //     compareSymbols(revealedicons.current)
+  //   }
     
-    if (pairLength  === 2) {
+  //   if (pairLength  === 2) {
     
-      revealedTiles.current?.forEach(tile => {
-          tile.classList.remove('reveal')
-        }
-      )
-      pair.current = []
-      revealedTiles.current = [event.target]
-    }
+  //     revealedicons.current?.forEach(tile => {
+  //         tile.classList.remove('reveal')
+  //       }
+  //     )
+  //     pair.current = []
+  //     revealedicons.current = [event.target]
+  //   }
+
+  //   console.log(event.target)
+  //   event.target.classList.add('reveal')
+
+  //   const revealedSymbol: string = event.target.childNodes[0]
+  //   pair.current = pair.current?.concat(`${revealedSymbol}`) || [`${revealedSymbol}`];
+  // }
 
 
-    event.target.classList.add('reveal')
+  // function compareSymbols(revealedicons: HTMLDivElement[]) {
+  //   const a = revealedicons[0].id
+  //   const b = revealedicons[1].id
 
-    const revealedSymbol: string = event.target.childNodes[0]
-    pair.current = pair.current?.concat(`${revealedSymbol}`) || [`${revealedSymbol}`];
-  }
+  //   console.log(a,b)
 
+  //   if(revealedicons[0] === revealedicons[1]) {
+  //     revealedicons.forEach((tile) => tile.classList.remove('reveal'))
+  //     console.log('to samo')
+  //     return
+  //   }
+  //   if (a == b) {
+  //     revealedicons.forEach((tile) => tile.classList.add('correct'))
+  //     console.log('green')
+  //     progress.current++
+  //     progress.current <= icons.length? progressCount(progress.current): null
+  //   } else {
+  //     revealedicons.forEach((tile) => tile.classList.add('reveal'))
+  //   }
+  // }
 
-  function compareSymbols(revealedTiles: HTMLDivElement[]) {
-    const a = revealedTiles[0].childNodes[0]
-    const b = revealedTiles[1].childNodes[0]
+  // function progressCount(gameProgress: number) {
+  //   const maxProgress: number = icons.length
 
-    console.log(a,b)
-
-    if(revealedTiles[0] === revealedTiles[1]) {
-      revealedTiles.forEach((tile) => tile.classList.remove('reveal'))
-      console.log('to samo')
-      return
-    }
-    if (a == b) {
-      revealedTiles.forEach((tile) => tile.classList.add('correct'))
-      console.log('green')
-      progress.current++
-      console.log('wyslany progress',progress)
-      progress.current <= tiles.length? progressCount(progress.current): null
-    } else {
-      revealedTiles.forEach((tile) => tile.classList.add('reveal'))
-    }
-  }
-
-  function progressCount(gameProgress: number) {
-    const maxProgress: number = tiles.length
-
-    if (gameProgress === maxProgress) {
-      setIsGameActive(false)
-    }
-  }
+  //   if (gameProgress === maxProgress) {
+  //     setIsGameActive(false)
+  //   }
+  // }
 
 
-  
+
   const newGame = async () => {
     try {
-      const imgTiles: string[] = []
+      const icons: {image: string, id: number}[] = []
+
+      // TODO: gridSize state
       for (let i = 0; i < 8; i++) {
         const iconIndex: number = Math.floor(Math.random() * iconsArray.length)
-        const hexIndex: number = Math.floor(Math.random() * hexArray.length)
-        console.log(hexArray[hexIndex])
-        const response = await axios.get(`https://api.dicebear.com/7.x/icons/svg?backgroundColor=${hexArray[hexIndex]}&icon=${iconsArray[iconIndex]}`)
+        const color = hexColor()
+        console.log(color)
+        const response = await axios.get(`https://api.dicebear.com/7.x/icons/svg?backgroundColor=${color}&icon=${iconsArray[iconIndex]}`)
         const imgPath = response.data
-        imgTiles.push(imgPath)
+        icons.push({ image: imgPath, id: i})
+        console.log(icons[i].id)
       }
-      setTiles(imgTiles)
+      setIcons(icons)
       setIsGameActive(true)
     } catch (error) {
       console.error(error)
     }
   }
 
+
+
   return (
     <>
       {isGameActive? (
-        <div className='grid-container'>{createGrid(4).map(tiles => {
-          return(
-            <div className={'vertical-container'}>{
-              tiles.map(tile => {
-                console.log(tile)
-                return (
-                
-                <div 
-                  className='symbol-holder'
-                  onClick={revealSymbol}
-                  key={crypto.randomUUID()}
-                  dangerouslySetInnerHTML={{ __html: tile }}
-                >
-                </div>
-              )})
-            }</div>
-          )
-        })}
-        </div>
+        <Grid icons={icons}/>
       )
       : <button onClick={newGame}>New Game</button>
       }

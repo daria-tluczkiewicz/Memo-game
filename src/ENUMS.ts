@@ -116,23 +116,11 @@ export const iconsArray: string[] = [
     'search'
   ];
 
-  function generateHashArray(count: number) {
-    const hexArray: string[] = [];
   
-    for (let i = 0; i < count; i++) {
+  export function hexColor() {
+    const randomColor = Math.floor(Math.random() * 16777215).toString(16);
+    const hexColor ='0'.repeat(6 - randomColor.length) + randomColor;
   
-      hexArray.push(hexColor());
-    }
-  
-    return hexArray;
+    return hexColor;
   }
-  
-  function hexColor() {
-    const colorHex = `${Math.floor(Math.random()*16777215).toString(16)}`;
-
-    return colorHex
-  }
-  
-  export const hexArray: string[] = generateHashArray(100);
-  
   
