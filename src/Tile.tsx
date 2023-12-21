@@ -1,33 +1,37 @@
-import { useState } from "react";
+
 import { animated, useSpring } from "@react-spring/web";
 
-export default function Tile({ tile, onFlippedChange, flippedPair }) {
-  const [flipped, setFlipped] = useState(false);
+export default function Tile({ tile, onFlippedChange, isFlipped }) {
   
   const { transform } = useSpring({
-    transform: `perspective(600px) rotateY(${flipped ? 180 : 0}deg)`,
+    transform: `perspective(600px) rotateY(${isFlipped ? 180 : 0}deg)`,
     config: { duration: 500 },
   });
   const { backTransform } = useSpring({
-    backTransform: `perspective(600px) rotateY(${flipped ? 0 : -180}deg)`,
+    backTransform: `perspective(600px) rotateY(${isFlipped ? 0 : -180}deg)`,
     config: { duration: 500 },
   });
+  console.log(isFlipped, tile.individualKey)
 
 
-  const flipTile = () => {
-    let newState: boolean = true
+  // const flipTile = () => {
+  //   const newState: boolean = true
 
-    if (flippedPair.length === 2) {
-        newState = false
-    }
-    setFlipped(newState)
+  //   // if (flippedPair.length === 2) {
+  //   //     newState = false
+  //   //     onFlippedChange({}, tile.id)
+  //   // }
+  //   // if(flippedPair.length > 0 || flippedPair.length < 2){
+  //   //   newState = true
+  //   // }
+  //   setFlipped(individualKey)
 
-    newState? onFlippedChange(newState, tile.id) : null
-  }
+  //   newState? onFlippedChange(newState, tile.id) : null
+  // }
 
 
-  console.log(flippedPair, 'to je nowe')
-  console.log(flipped, 'isflipped?')
+  // console.log(flippedPair, 'to je nowe')
+  // console.log(flipped, 'isflipped?')
 
   
 
@@ -35,7 +39,7 @@ export default function Tile({ tile, onFlippedChange, flippedPair }) {
     <>
       <div
         className="tile"
-        onClick={flipTile}
+        onClick={() => onFlippedChange(tile.individualKey)}
         key={crypto.randomUUID()}
         id={tile.id.toString()}
       >

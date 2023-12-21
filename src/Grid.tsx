@@ -3,9 +3,11 @@ import Tile from "./Tile";
 
 export default function Grid({ icons }) {
   const [grid, setGrid] =
-    useState<Array<Array<{ image: string; id: number }>>>();
+    useState<
+      Array<Array<{ image: string; id: number; individualKey: string }>>
+    >();
 
-  const [flippedPair, setFlippedPair] = useState<{isFlipped: boolean, id: number}[]>([]);
+  const [flippedTiles, setflippedTiles] = useState<string[]>([]);
 
   useEffect(() => {
     createGrid(4, icons);
@@ -15,7 +17,9 @@ export default function Grid({ icons }) {
     gridSize: number,
     icons: Array<{ image: string; id: number }>
   ) {
-    const grid: Array<Array<{ image: string; id: number }>> = [];
+    const grid: Array<
+      Array<{ image: string; id: number; individualKey: string }>
+    > = [];
     const fullicons = icons.concat(icons);
 
     for (let x = 0; x < gridSize; x++) {
@@ -24,23 +28,40 @@ export default function Grid({ icons }) {
       for (let y = 0; y < gridSize; y++) {
         const index: number = Math.floor(Math.random() * fullicons.length);
         const tileId = fullicons[index].id;
-        grid[x].push({ image: fullicons[index].image, id: tileId });
+        const individualKey: string = crypto.randomUUID().slice(-5);
+        grid[x].push({
+          image: fullicons[index].image,
+          id: tileId,
+          individualKey: individualKey,
+        });
         fullicons.splice(index, 1);
       }
     }
     setGrid(grid);
   }
 
-  function handleFlippedChange(newState: boolean, id: number) {
-    setFlippedPair(flippedPair => [...flippedPair, {isFlipped: newState, id: id }]);
+  function handleFlippedChange(key: string) {
+    if (flippedTiles.length === 2) {
+      setflippedTiles([]);
+    }
+
+    setflippedTiles((flippedTiles) => [...flippedTiles, key]);
   }
+
+ 
 
   return (
     <div className="grid-container">
       {grid?.map((icons) => (
         <div className={"vertical-container"}>
           {icons.map((tile) => {
-            return <Tile tile={tile} onFlippedChange={handleFlippedChange} flippedPair={flippedPair} />;
+            return (
+              <Tile
+                tile={tile}
+                onFlippedChange={handleFlippedChange}
+                isFlipped={flippedTiles.includes(tile.individualKey)}
+              />
+            );
           })}
         </div>
       ))}
