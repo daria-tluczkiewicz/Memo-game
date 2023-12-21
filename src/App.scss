@@ -15,6 +15,18 @@ $gridgap: 20px;
   height: 400px;
   width: 400px;
   gap: $gridgap;
+  position: relative;
+
+  .progress-bar {
+    position: absolute;
+    top: -40px;
+    left: 50%;
+    transform: translateX(-50%);
+    height: 10px;
+    border-radius: 5px;
+    background-color: white;
+    transition: cubic-bezier(0.075, 0.82, 0.165, 1);
+  }
 }
 
 .vertical-container {
@@ -23,6 +35,7 @@ $gridgap: 20px;
   justify-content: space-around;
   align-items: center;
   height: 100%;
+  list-style-type: none;
 
   .tile {
     border-radius: 5px;
@@ -30,6 +43,11 @@ $gridgap: 20px;
     height: 100%;
     position: relative;
     perspective: 1000px;
+
+    &:hover {
+      transform: scale(1.05);
+      transition: cubic-bezier(0.075, 0.82, 0.165, 1);
+    }
 
     .tile-front, .tile-back {
       position: absolute;
