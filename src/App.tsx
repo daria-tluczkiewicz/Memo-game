@@ -103,11 +103,9 @@ function App() {
       for (let i = 0; i < 8; i++) {
         const iconIndex: number = Math.floor(Math.random() * iconsArray.length)
         const color = hexColor()
-        console.log(color)
         const response = await axios.get(`https://api.dicebear.com/7.x/icons/svg?backgroundColor=${color}&icon=${iconsArray[iconIndex]}`)
         const imgPath = response.data
         icons.push({ image: imgPath, id: i})
-        console.log(icons[i].id)
       }
       setIcons(icons)
       setIsGameActive(true)
@@ -120,7 +118,7 @@ function App() {
 
   return (
     <>
-      {isGameActive? (
+      {isGameActive && icons.length > 1? (
         <Grid icons={icons}/>
       )
       : <button onClick={newGame}>New Game</button>
