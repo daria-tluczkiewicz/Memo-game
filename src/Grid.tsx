@@ -1,24 +1,29 @@
-import { useEffect, useState} from "react";
+import React, { useCallback, useEffect, useState} from "react";
 import Tile from "./Tile";
-import ProgressBar from "./ProgressBar";
+import GameEnded from "./GameEnded";
 
-export default function Grid({ icons }) {
+interface Grid {
+  icons:  {image: string; id: number; }[],
+  keys: string[],
+  endGame: React.FC
+}
+
+export default function Grid({ icons, keys, endGame }: Grid) {
   const [grid, setGrid] =
     useState<
       Array<Array<{ image: string; id: number; individualKey: string }>>
       >();
       
-  const [flippedTiles, setflippedTiles] = useState<string[]>([]);
+  const [flippedTiles, setflippedTiles] = useState<{key: string, id: number}[]>([]);
   const [correctTiles, setCorrectTiles] = useState<number[]>([]);
-  const [tilesToCompare, setTilesToCompare] = useState<number[]>([]);
-  // const progress = useRef<number>(0);
-  const [progress, setProgress] = useState<number>(0);
 
   useEffect(() => {
     createGrid(4, icons);
   }, [icons]);
+
   useEffect(() => {
-  }, [correctTiles]);
+    console.log(flippedTiles,correctTiles);
+  }, [flippedTiles, correctTiles]);
 
   function createGrid(
     gridSize: number,
@@ -48,53 +53,75 @@ export default function Grid({ icons }) {
   }
 
   function handleFlippedChange(key: string, id: number) {
-    if (flippedTiles.length === 2) {
-      compereTiles()
+    console.log('liczba odwróconych kafli: ',flippedTiles.length)
+    if (flippedTiles.length >= 1) {
+      console.log('sooo dwaa');
+      compareTiles()
       setflippedTiles([]);
-      setTilesToCompare([])
     }
-    setTilesToCompare((tilesToCompare) => [...tilesToCompare, id])
-    setflippedTiles((flippedTiles) => [...flippedTiles, key]);
+    
+    setflippedTiles((flippedTiles) => [...flippedTiles, {key, id}]);
   }
 
-  
-function compereTiles() {
-  const a: number = tilesToCompare[0]
-  const b: number = tilesToCompare[1]
+function compareTiles() {
+  const a: number = flippedTiles[0].id
+  const b: number = flippedTiles[1].id
 
   if(a === b) {
-    setCorrectTiles(correctTiles => [...correctTiles, b])
-    // progress.current++ 
-    setProgress(correctTiles.length + 2  / 2)
+    const newCorrectTiles = [...correctTiles, b]
+    console.log('newCorrectTile', newCorrectTiles)
+    setCorrectTiles(newCorrectTiles)
+    // updateCorrectTiles(newCorrectTiles)
+    // setCorrectTiles([...correctTiles, b])
+    console.log('setting correct tiles');
   } 
 }
 
-const keys = (icons: string[]) => {
-  const keys: string[] = []
-  for(let i: number = 0; i < icons.length; i++){
-    keys.push(crypto.randomUUID())
+const isAlreadyFlipped = (tileToCompare: {
+  individualKey: string;
+})=> {
+  for (const tile of flippedTiles) {
+    if (tile.key === tileToCompare.individualKey) {
+      return true
+    }
   }
-  return keys
+  return false
 }
-console.log(progress)
+
+
+// const updateCorrectTiles = useCallback(
+//   (newCorrectTiles: number[]) => {
+//     setCorrectTiles(newCorrectTiles);
+//     console.log('Correct Tiles Updated:', newCorrectTiles);
+//   },
+//   []
+// )
+
+// if(correctTiles.length === icons.length){
+//   endGame(correctTiles)
+//   console.log('win')
+// }
 
   return (
-    <div className="grid-container">
-      <ProgressBar currentProgress={progress} maxProgress={icons.length}/>
-
-      {grid?.map((icons, index) => (
-        <div key={keys[index]} className={"vertical-container"}>
-          {icons.map((tile) => {
-            return (
-                <Tile
-                  tile={tile}
-                  onFlippedChange={handleFlippedChange}
-                  isFlipped={flippedTiles.includes(tile.individualKey) || correctTiles.includes(tile.id)}
-                />
-            )
-          })}
-        </div>
-      ))}
-    </div>
+    <>
+      <div className="grid-container">
+        {grid?.map((icons, index) => (
+          <div key={keys[index]} className={"vertical-container"}>
+            {icons.map((tile) => {
+              return (
+                  <Tile
+                    key={tile.individualKey}
+                    tile={tile}
+                    onFlippedChange={handleFlippedChange}
+                    isFlipped={correctTiles.includes(tile.id) || isAlreadyFlipped(tile)? true : false}
+                  />
+              )
+            })}
+          </div>
+        ))}
+      </div>
+      <button onClick={()=>setCorrectTiles([0,1,2,3,4,5,6,7])}/>
+      {correctTiles.length === icons.length? <GameEnded/> : null}
+    </>
   );
 }
