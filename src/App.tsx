@@ -1,14 +1,19 @@
 // import { useState } from 'react'
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import './App.scss'
 import axios from 'axios';
 import { iconsArray } from './ENUMS';
 import { hexColor } from './ENUMS';
 import Grid from './Grid';
+import GameOver from './GameOver';
 
 function App() {
   const [icons, setIcons] = useState<{image: string, id: number}[]>([])
   const [isGameActive, setIsGameActive] = useState<boolean>(false)
+
+  useEffect(()=> {
+
+  }, [isGameActive])
   
 
   const newGame = async () => {
@@ -37,16 +42,12 @@ function App() {
     }
     return keys
   }
-  function handleEndGame (){
-    setIsGameActive(false)
-  }
 
   return (
     <>
-      {isGameActive && icons.length > 1? (
-        <Grid keys={keys} icons={icons} endGame={handleEndGame}/>
-      )
-      : <button onClick={newGame}>New Game</button>
+      {isGameActive && icons.length > 1
+      ? <Grid keys={keys()} icons={icons} setIsGameActive={setIsGameActive}/>
+      : <GameOver newGame={newGame} />
       }
     </>
   )
