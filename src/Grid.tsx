@@ -4,34 +4,37 @@ import Tile from "./Tile";
 interface Grid {
   icons: { image: string; id: number }[];
   keys: string[],
-  setIsGameActive: React.Dispatch<React.SetStateAction<boolean>>
+  setIsGameOver: React.Dispatch<React.SetStateAction<boolean>>
 }
 
-export default function Grid({ icons, keys, setIsGameActive }: Grid) {
-  const [grid, setGrid] =
-    useState<
-      Array<Array<{ image: string; id: number; individualKey: string }>>
-    >();
+export default function Grid({ icons, keys, setIsGameOver }: Grid) {
+  const [grid, setGrid] = useState<Array<Array<{ 
+    image: string,
+     id: number,
+     individualKey: string 
+  }>>>();
 
-  const [flippedTiles, setflippedTiles] = useState<
-    { key: string; id: number }[]
-  >([]);
+  const [flippedTiles, setflippedTiles] = useState<{ 
+    key: string,
+    id: number 
+  }[]>([]);
+
   const [correctTiles, setCorrectTiles] = useState<number[]>([])
 
   useEffect(() => {
     createGrid(4, icons)
   }, [icons]);
 
-  useEffect(() => {
-  }, [flippedTiles, correctTiles])
 
   function createGrid(
     gridSize: number,
     icons: Array<{ image: string; id: number }>
   ) {
-    const grid: Array<
-      Array<{ image: string; id: number; individualKey: string }>
-    > = [];
+    const grid: Array<Array<{ 
+      image: string,
+      id: number,
+      individualKey: string 
+    }>> = [];
     const fullicons = icons.concat(icons);
 
     for (let x = 0; x < gridSize; x++) {
@@ -51,25 +54,7 @@ export default function Grid({ icons, keys, setIsGameActive }: Grid) {
     }
     setGrid(grid);
   }
-
-  function handleFlippedChange(key: string, id: number) {
-    if (flippedTiles.length >= 2) {
-      compareTiles()
-      setflippedTiles([])
-    }
-
-    setflippedTiles((flippedTiles) => [...flippedTiles, { key, id }]);
-  }
-
-  function compareTiles() {
-    const a: number = flippedTiles[0].id
-    const b: number = flippedTiles[1].id
-
-    if (a === b) {
-      const newCorrectTiles = [...correctTiles, b]
-      setCorrectTiles(newCorrectTiles)
-    }
-  }
+  console.log({correctTiles})
 
   const isAlreadyFlipped = (tileToCompare: { individualKey: string }) => {
     for (const tile of flippedTiles) {
@@ -80,21 +65,22 @@ export default function Grid({ icons, keys, setIsGameActive }: Grid) {
     return false
   }
 
-  if (correctTiles.length === icons.length) {
-    setIsGameActive(false)
-  }
-
+  const isGameFinished = correctTiles.length === icons.length * 2
+  isGameFinished? setIsGameOver(true) : null
   return (
     <>
       <div className="grid-container">
+        {/* <Test data={correctTiles}/> */}
         {grid?.map((icons, index) => (
           <div key={keys[index]} className={"vertical-container"}>
             {icons.map((tile) => {
               return (
                 <Tile
+                  setCorrectTiles={setCorrectTiles}
+                  flippedTiles={flippedTiles}
+                  setflippedTiles={setflippedTiles}
                   key={tile.individualKey}
                   tile={tile}
-                  onFlippedChange={handleFlippedChange}
                   isFlipped={
                     correctTiles.includes(tile.id) || isAlreadyFlipped(tile)
                       ? true
@@ -106,7 +92,6 @@ export default function Grid({ icons, keys, setIsGameActive }: Grid) {
           </div>
         ))}
       </div>
-      <button onClick={() => setIsGameActive(false)}/>
     </>
   )
 }
