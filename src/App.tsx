@@ -4,10 +4,10 @@ import './App.scss'
 import axios from 'axios';
 import { iconsArray } from './ENUMS';
 import { hexColor } from './ENUMS';
-import Grid from './Grid';
-import GameOver from './GameOver';
-import NewGameButton from './NewGameButton';
-import Loading from './Loading';
+import Grid from './components/Grid';
+import GameOver from './components/GameOver';
+import NewGameButton from './components/NewGameButton';
+import Loading from './components/Loading';
 
 function App() {
   const [icons, setIcons] = useState<{image: string, id: number}[]>([])
@@ -45,7 +45,8 @@ function App() {
 
   return (
     <>
-      {isLoading
+    <Loading/>
+      {/* {isLoading
       ? <NewGameButton newGame={newGame}/>
 
       : isGameOver
@@ -57,7 +58,7 @@ function App() {
               setIsGameOver={setIsGameOver}
             />
           : <Loading/>
-      }
+      } */}
     </>
   )
 }

@@ -88,3 +88,28 @@ $gridgap: 20px;
     }
   }
 }
+
+.moving-square{
+  height: 70px;
+  width: 70px;
+  border-radius: 4px;
+  background-color: #bff60c;
+  background-color: #00a4ef;
+  animation: flipping-square 3s infinite;
+}
+
+
+@keyframes flipping-square {
+  25% {
+    background-color: #6ab43e;
+    transform: translate(100%, 0) rotateY(-180deg) rotateX(0);
+  }
+  50% {
+    background-color: #e89d41;
+    transform: translate(100%, 100%) rotateY(-180deg) rotateX(-180deg);
+  }
+  75% {
+    background-color: #fd4084;
+    transform: translate(0, 100%) rotateY(0deg) rotateX(-180deg);
+  }
+}
