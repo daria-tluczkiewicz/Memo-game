@@ -1,18 +1,15 @@
-import { useEffect, useState } from "react";
+import { useState, useMemo } from "react";
 import Tile from "./Tile";
+import { v4 as uuidv4 } from 'uuid';
 
 interface Grid {
   icons: { image: string; id: number }[];
   keys: string[],
   setIsGameOver: React.Dispatch<React.SetStateAction<boolean>>
+  gridSize: number
 }
 
-export default function Grid({ icons, keys, setIsGameOver }: Grid) {
-  const [grid, setGrid] = useState<Array<Array<{ 
-    image: string,
-     id: number,
-     individualKey: string 
-  }>>>();
+export default function Grid({ icons, keys, setIsGameOver, gridSize }: Grid) {
 
   const [flippedTiles, setflippedTiles] = useState<{ 
     key: string,
@@ -21,40 +18,47 @@ export default function Grid({ icons, keys, setIsGameOver }: Grid) {
 
   const [correctTiles, setCorrectTiles] = useState<number[]>([])
 
-  useEffect(() => {
-    createGrid(4, icons)
-  }, [icons]);
-
-
-  function createGrid(
-    gridSize: number,
-    icons: Array<{ image: string; id: number }>
-  ) {
-    const grid: Array<Array<{ 
+  const createGrid: () => [{ 
+    image: string,
+    id: number,
+    individualKey: string
+  }[]] = () => {
+    const grid: [{ 
       image: string,
       id: number,
-      individualKey: string 
-    }>> = [];
+      individualKey: string
+    }[]] = [[]]
     const fullicons = icons.concat(icons);
 
     for (let x = 0; x < gridSize; x++) {
-      grid[x] = [];
-
+      const row: {
+        image: string,
+        id: number,
+        individualKey: string,
+      }[] = []
+      
       for (let y = 0; y < gridSize; y++) {
         const index: number = Math.floor(Math.random() * fullicons.length);
         const tileId = fullicons[index].id;
-        const individualKey: string = crypto.randomUUID().slice(-5);
-        grid[x].push({
+        const individualKey: string = uuidv4()
+        row.push({
           image: fullicons[index].image,
           id: tileId,
           individualKey: individualKey,
         });
         fullicons.splice(index, 1);
       }
+      if (x === 0) {
+        grid[0] = row
+      } else {
+        grid.push(row);
+
+      }
     }
-    setGrid(grid);
+    return grid
   }
-  console.log({correctTiles})
+  const grid = useMemo(createGrid, [icons, gridSize])
+  console.log(grid)
 
   const isAlreadyFlipped = (tileToCompare: { individualKey: string }) => {
     for (const tile of flippedTiles) {
@@ -67,11 +71,11 @@ export default function Grid({ icons, keys, setIsGameOver }: Grid) {
 
   const isGameFinished = correctTiles.length === icons.length * 2
   isGameFinished? setIsGameOver(true) : null
+
   return (
     <>
       <div className="grid-container">
-        {/* <Test data={correctTiles}/> */}
-        {grid?.map((icons, index) => (
+        {grid.map((icons, index) => (
           <div key={keys[index]} className={"vertical-container"}>
             {icons.map((tile) => {
               return (
