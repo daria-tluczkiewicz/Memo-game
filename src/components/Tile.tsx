@@ -1,15 +1,15 @@
-import { memo } from "react";
 import { animated, useSpring } from "@react-spring/web";
 
 interface TileProps {
   tile: { image: string; id: number; individualKey: string },
   flippedTiles: { key: string; id: number }[],
   isFlipped: boolean,
-  setflippedTiles: React.Dispatch<React.SetStateAction<{ key: string; id: number }[]>>
-  setCorrectTiles: React.Dispatch<React.SetStateAction<number[]>>
+  setflippedTiles: React.Dispatch<React.SetStateAction<{ key: string; id: number }[]>>,
+  gridSize: number,
+  setMovesCount: React.Dispatch<React.SetStateAction<number>>
 }
 
-const Tile: React.FC<TileProps> = memo(({ tile, flippedTiles, isFlipped, setflippedTiles, setCorrectTiles}) => {
+const Tile: React.FC<TileProps> =({ tile, flippedTiles, isFlipped, setflippedTiles, gridSize, setMovesCount }) => {
   
   const { transform } = useSpring({
     transform: `perspective(600px) rotateY(${isFlipped ? 180 : 0}deg)`,
@@ -21,23 +21,13 @@ const Tile: React.FC<TileProps> = memo(({ tile, flippedTiles, isFlipped, setflip
   });
 
   function updateFlippedTiles() {
-    flippedTiles.length === 2 
-      ? setflippedTiles([{key: tile.individualKey, id: tile.id}])
-      : setflippedTiles([...flippedTiles, {key: tile.individualKey, id: tile.id}])
-    
-  }
-
-  const flipped = flippedTiles.length === 2 ? compareTiles() : false
-
-  function compareTiles() {
-    const a: number = flippedTiles[0].id
-    const b: number = flippedTiles[1].id
-
-    if (a === b && a === tile.id) {
-      setCorrectTiles((tiles)=>[...tiles, tile.id])
-      return true
+    if (flippedTiles.length === 2 ) {
+      setMovesCount((moves) => moves + 1)
+      setflippedTiles([{key: tile.individualKey, id: tile.id}])
+      // compareTiles()
+    } else {
+      setflippedTiles([...flippedTiles, {key: tile.individualKey, id: tile.id}])
     }
-    return false
   }
 
   return (
@@ -45,8 +35,9 @@ const Tile: React.FC<TileProps> = memo(({ tile, flippedTiles, isFlipped, setflip
       <div
         key={tile.individualKey}
         className="tile"
-        onClick={() => flipped? null : updateFlippedTiles()}
+        onClick={() => isFlipped? null : updateFlippedTiles()}
         id={tile.id.toString()}
+        style={{ width: `${ 100/gridSize - 5 }vw`}}
       >
         <animated.div
           className="tile-front"
@@ -64,6 +55,6 @@ const Tile: React.FC<TileProps> = memo(({ tile, flippedTiles, isFlipped, setflip
       </div>
     </>
   );
-})
+}
 
 export default Tile

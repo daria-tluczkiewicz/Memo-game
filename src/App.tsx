@@ -16,8 +16,7 @@ function App() {
   const [isLoading, setIsLoading] = useState<boolean>(false)
   const [gridSize, setGridSize] = useState<number>(4)
 
-  console.log({isLoading})
-  const newGame = async (size) => {
+  const newGame = async (size: number) => {
 
     try {
       const icons: {image: string, id: number}[] = []
@@ -37,6 +36,7 @@ function App() {
       console.error(error)
     }
   }
+  console.log({window})
 
   const keys = () => {
     const keys: string[] = []
@@ -48,10 +48,7 @@ function App() {
   return (
     <>
       {isLoading
-
       ? <Loading/> 
-     
-
       : isGameOver
         ? <GameOver newGame={newGame} /> 
         : icons.length > 1 

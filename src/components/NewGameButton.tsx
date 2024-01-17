@@ -1,3 +1,4 @@
+import { v4 as uuidv4 } from 'uuid';
 export default function NewGameButton({ newGame, setGridSize, setIsLoading }) {
 
   function startGameWithCustomSize(size: number){
@@ -5,13 +6,15 @@ export default function NewGameButton({ newGame, setGridSize, setIsLoading }) {
     setGridSize(size)
     newGame(size)
   }
+
+  const gridSizes = [2, 4, 5, 6, 7]
   return (
     <>
       <h1> Choose size: </h1>
       <div className="select-grid-size">
-        <button onClick={()=>startGameWithCustomSize(8)}>8 X 8</button>
-        <button onClick={()=>startGameWithCustomSize(6)}>6 X 6</button>
-        <button onClick={()=>startGameWithCustomSize(4)}>4 X 4</button>
+        {gridSizes.map(size => (
+          <button key={uuidv4()} onClick={()=>startGameWithCustomSize(size)}>{size} X {size}</button>
+        ))}
       </div>
     </>
   )

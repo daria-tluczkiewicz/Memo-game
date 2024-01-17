@@ -1,15 +1,16 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import Tile from "./Tile";
 import { v4 as uuidv4 } from 'uuid';
+import Progress from "./Progress";
 
-interface Grid {
+interface GridProps {
   icons: { image: string; id: number }[];
   keys: string[],
   setIsGameOver: React.Dispatch<React.SetStateAction<boolean>>
   gridSize: number
 }
 
-export default function Grid({ icons, keys, setIsGameOver, gridSize }: Grid) {
+export default function Grid({ icons, keys, setIsGameOver, gridSize }: GridProps) {
 
   const [flippedTiles, setflippedTiles] = useState<{ 
     key: string,
@@ -17,6 +18,13 @@ export default function Grid({ icons, keys, setIsGameOver, gridSize }: Grid) {
   }[]>([]);
 
   const [correctTiles, setCorrectTiles] = useState<number[]>([])
+  const [movesCount, setMovesCount] = useState<number>(0)
+
+  useEffect(()=> {
+    if (correctTiles.length - 1 === icons.length - 1) {
+     setIsGameOver(true)
+    }
+  },[correctTiles.length, setIsGameOver, icons.length])
 
   const createGrid: () => [{ 
     image: string,
@@ -57,36 +65,52 @@ export default function Grid({ icons, keys, setIsGameOver, gridSize }: Grid) {
     }
     return grid
   }
+  
   const grid = useMemo(createGrid, [icons, gridSize])
-  console.log(grid)
 
-  const isAlreadyFlipped = (tileToCompare: { individualKey: string }) => {
-    for (const tile of flippedTiles) {
-      if (tile.key === tileToCompare.individualKey) {
-        return true
-      }
+  const isAlreadyFlipped = (tileKey: string): boolean => {
+    return flippedTiles.some(tile => tile.key === tileKey)
+  };
+  
+  console.log({correctTiles, flippedTiles})
+
+  flippedTiles.length === 2 
+  ? compareTiles()
+  : null
+
+  function compareTiles() {
+    const a: number = flippedTiles[0].id
+    const b: number = flippedTiles[1].id
+    
+    if (a === b) {
+      !correctTiles.includes(b)? setCorrectTiles((correctTiles) => [...correctTiles, b]) : null
+      return true
     }
     return false
   }
 
-  const isGameFinished = correctTiles.length === icons.length * 2
-  isGameFinished? setIsGameOver(true) : null
+  
 
   return (
     <>
       <div className="grid-container">
+        <Progress
+          movesCount={movesCount}
+        />
         {grid.map((icons, index) => (
           <div key={keys[index]} className={"vertical-container"}>
             {icons.map((tile) => {
+              // console.log({correctTiles})
               return (
                 <Tile
-                  setCorrectTiles={setCorrectTiles}
                   flippedTiles={flippedTiles}
                   setflippedTiles={setflippedTiles}
+                  setMovesCount={setMovesCount}
                   key={tile.individualKey}
                   tile={tile}
+                  gridSize={gridSize}
                   isFlipped={
-                    correctTiles.includes(tile.id) || isAlreadyFlipped(tile)
+                    correctTiles.includes(tile.id) || isAlreadyFlipped(tile.individualKey)
                       ? true
                       : false
                   }

@@ -1,8 +1,9 @@
 
-export default function GameOver({newGame}) {
+export default function GameOver({ newGame, moves='x' }) {
   return (
     <>
-      <div>Congratulations, you won!</div>
+      <h2>Congratulations, you won!</h2>
+      <p>You've used {moves} moves.</p>
       <button onClick={newGame}>New Game</button>
     </>
   )
