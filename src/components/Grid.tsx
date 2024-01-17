@@ -94,9 +94,7 @@ export default function Grid({ icons, keys, setIsGameOver, gridSize }: GridProps
   return (
     <>
       <div className="grid-container">
-        <Progress
-          movesCount={movesCount}
-        />
+        <Progress/>
         {grid.map((icons, index) => (
           <div key={keys[index]} className={"vertical-container"}>
             {icons.map((tile) => {

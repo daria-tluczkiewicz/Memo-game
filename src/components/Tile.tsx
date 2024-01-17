@@ -1,4 +1,6 @@
 import { animated, useSpring } from "@react-spring/web";
+import { incrementMovesCount } from "../redux/memoSlice";
+import { useDispatch } from "react-redux";
 
 interface TileProps {
   tile: { image: string; id: number; individualKey: string },
@@ -19,10 +21,12 @@ const Tile: React.FC<TileProps> =({ tile, flippedTiles, isFlipped, setflippedTil
     backTransform: `perspective(600px) rotateY(${isFlipped ? 0 : -180}deg)`,
     config: { duration: 500 },
   });
+  const dispatch = useDispatch()
 
   function updateFlippedTiles() {
     if (flippedTiles.length === 2 ) {
-      setMovesCount((moves) => moves + 1)
+      dispatch(incrementMovesCount())
+      // setMovesCount((moves) => moves + 1)
       setflippedTiles([{key: tile.individualKey, id: tile.id}])
       // compareTiles()
     } else {
