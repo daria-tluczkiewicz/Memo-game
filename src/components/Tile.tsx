@@ -1,17 +1,14 @@
-import { animated, useSpring } from "@react-spring/web";
-import { incrementMovesCount } from "../redux/memoSlice";
-import { useDispatch } from "react-redux";
+import { animated, useSpring } from "@react-spring/web"
+import { addCorrectTile, addFlippedTile, clearAndAddNewTile, incrementMovesCount } from "../redux/memoSlice";
+import { useAppDispatch, useAppSelector } from "../redux/hooks";
 
 interface TileProps {
   tile: { image: string; id: number; individualKey: string },
-  flippedTiles: { key: string; id: number }[],
   isFlipped: boolean,
-  setflippedTiles: React.Dispatch<React.SetStateAction<{ key: string; id: number }[]>>,
   gridSize: number,
-  setMovesCount: React.Dispatch<React.SetStateAction<number>>
 }
 
-const Tile: React.FC<TileProps> =({ tile, flippedTiles, isFlipped, setflippedTiles, gridSize, setMovesCount }) => {
+const Tile: React.FC<TileProps> =({ tile, isFlipped, gridSize }) => {
   
   const { transform } = useSpring({
     transform: `perspective(600px) rotateY(${isFlipped ? 180 : 0}deg)`,
@@ -20,18 +17,42 @@ const Tile: React.FC<TileProps> =({ tile, flippedTiles, isFlipped, setflippedTil
   const { backTransform } = useSpring({
     backTransform: `perspective(600px) rotateY(${isFlipped ? 0 : -180}deg)`,
     config: { duration: 500 },
-  });
-  const dispatch = useDispatch()
+  })
+  const dispatch = useAppDispatch()
+
+  const flippedTiles = useAppSelector( state => state.memo.flippedTiles)
+  const correctTiles = useAppSelector(state => state.memo.correctTiles)
 
   function updateFlippedTiles() {
-    if (flippedTiles.length === 2 ) {
-      dispatch(incrementMovesCount())
-      // setMovesCount((moves) => moves + 1)
-      setflippedTiles([{key: tile.individualKey, id: tile.id}])
-      // compareTiles()
-    } else {
-      setflippedTiles([...flippedTiles, {key: tile.individualKey, id: tile.id}])
+    console.log({flippedTiles})
+    
+    const newFlippedTile = {
+      id: tile.id,
+      key: tile.individualKey
     }
+
+    if (flippedTiles.length === 2 ) {
+      dispatch(clearAndAddNewTile(newFlippedTile))
+      return
+    }
+    if (flippedTiles.length === 1) {
+      dispatch(incrementMovesCount())
+      dispatch(addFlippedTile(newFlippedTile))
+
+      compareTiles(flippedTiles[0].id, newFlippedTile.id) &&
+      !correctTiles.includes(newFlippedTile.id)
+        ? dispatch(addCorrectTile(newFlippedTile.id))
+        : null
+      return
+    }
+
+    dispatch(addFlippedTile(newFlippedTile))
+
+  }
+
+
+  function compareTiles(a: number, b:number) {
+    return a === b
   }
 
   return (

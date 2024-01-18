@@ -1,8 +1,10 @@
-import { useSelector } from "react-redux"
+
+import { useAppSelector } from "../redux/hooks"
+
 
 export default function Progress() {
-
-  const movesCount = useSelector(state => state.memo.movesCount)
+  
+  const movesCount = useAppSelector(state => state.memo.movesCount)
 
   return (
     <div className="progress">Moves: {movesCount}</div>

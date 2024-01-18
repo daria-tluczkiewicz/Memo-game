@@ -1,7 +1,7 @@
-import { useState, useMemo, useEffect } from "react";
+import { useMemo, useEffect } from "react";
 import Tile from "./Tile";
 import { v4 as uuidv4 } from 'uuid';
-import Progress from "./Progress";
+import {  useAppSelector } from "../redux/hooks"
 
 interface GridProps {
   icons: { image: string; id: number }[];
@@ -12,20 +12,26 @@ interface GridProps {
 
 export default function Grid({ icons, keys, setIsGameOver, gridSize }: GridProps) {
 
-  const [flippedTiles, setflippedTiles] = useState<{ 
-    key: string,
-    id: number 
-  }[]>([]);
+  // const [flippedTiles, setflippedTiles] = useState<{ 
+  //   key: string,
+  //   id: number 
+  // }[]>([]);
 
-  const [correctTiles, setCorrectTiles] = useState<number[]>([])
-  const [movesCount, setMovesCount] = useState<number>(0)
+  // const [correctTiles, setCorrectTiles] = useState<number[]>([])
+  // const [movesCount, setMovesCount] = useState<number>(0)
+  const flippedTiles = useAppSelector( state => state.memo.flippedTiles)
+  const correctTiles = useAppSelector( state => state.memo.correctTiles)
+
+
+
 
   useEffect(()=> {
     if (correctTiles.length - 1 === icons.length - 1) {
-     setIsGameOver(true)
-    }
+     setTimeout(() => setIsGameOver(true), 800) 
+  }
   },[correctTiles.length, setIsGameOver, icons.length])
 
+ 
   const createGrid: () => [{ 
     image: string,
     id: number,
@@ -36,7 +42,9 @@ export default function Grid({ icons, keys, setIsGameOver, gridSize }: GridProps
       id: number,
       individualKey: string
     }[]] = [[]]
-    const fullicons = icons.concat(icons);
+    const fullicons = icons.concat(icons)
+
+    
 
     for (let x = 0; x < gridSize; x++) {
       const row: {
@@ -68,42 +76,46 @@ export default function Grid({ icons, keys, setIsGameOver, gridSize }: GridProps
   
   const grid = useMemo(createGrid, [icons, gridSize])
 
+  
+  
+
   const isAlreadyFlipped = (tileKey: string): boolean => {
     return flippedTiles.some(tile => tile.key === tileKey)
   };
   
   console.log({correctTiles, flippedTiles})
 
-  flippedTiles.length === 2 
-  ? compareTiles()
-  : null
+  // flippedTiles.length === 2 
+  // ? compareTiles()
+  // : null
 
-  function compareTiles() {
-    const a: number = flippedTiles[0].id
-    const b: number = flippedTiles[1].id
+  // function compareTiles() {
+  //   const a: number = flippedTiles[0].id
+  //   const b: number = flippedTiles[1].id
     
-    if (a === b) {
-      !correctTiles.includes(b)? setCorrectTiles((correctTiles) => [...correctTiles, b]) : null
-      return true
-    }
-    return false
-  }
+  //   if (a === b) {
+  //     !correctTiles.includes(b)
+  //       ? dispatch(addCorrectTile(b))
+  //       : null
+  //     return true
+  //   }
+  //   return false
+  // }
 
   
 
   return (
     <>
       <div className="grid-container">
-        <Progress/>
+        
         {grid.map((icons, index) => (
           <div key={keys[index]} className={"vertical-container"}>
             {icons.map((tile) => {
               // console.log({correctTiles})
               return (
                 <Tile
-                  flippedTiles={flippedTiles}
-                  setflippedTiles={setflippedTiles}
-                  setMovesCount={setMovesCount}
+                  // setflippedTiles={setflippedTiles}
+                  // setMovesCount={setMovesCount}
                   key={tile.individualKey}
                   tile={tile}
                   gridSize={gridSize}

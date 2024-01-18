@@ -1,9 +1,9 @@
 
-import { useAppDispatch } from "../redux/hooks"
+import { useAppSelector } from "../redux/hooks"
 
 export default function GameOver({ newGame }) {
 
-  const movesCount: number = useAppDispatch(state => state.memo.movesCount)
+  const movesCount: number = useAppSelector(state => state.memo.movesCount)
   return (
     <>
       <h2>Congratulations, you won!</h2>
