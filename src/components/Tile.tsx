@@ -1,14 +1,17 @@
 import { animated, useSpring } from "@react-spring/web"
-import { addCorrectTile, addFlippedTile, clearAndAddNewTile, incrementMovesCount } from "../redux/memoSlice";
+import { addCorrectTile, addFlippedTile, clearAndAddNewTile, incrementMovesCount, removeFromFlippedTiles } from "../redux/memoSlice";
 import { useAppDispatch, useAppSelector } from "../redux/hooks";
 
 interface TileProps {
   tile: { image: string; id: number; individualKey: string },
   isFlipped: boolean,
-  gridSize: number,
 }
 
-const Tile: React.FC<TileProps> =({ tile, isFlipped, gridSize }) => {
+const Tile: React.FC<TileProps> =({ tile, isFlipped }) => {
+
+  const flippedTiles = useAppSelector( state => state.memo.flippedTiles)
+  const correctTiles = useAppSelector(state => state.memo.correctTiles)
+  const gridSize = useAppSelector(state => state.memo.gridSize)
   
   const { transform } = useSpring({
     transform: `perspective(600px) rotateY(${isFlipped ? 180 : 0}deg)`,
@@ -20,8 +23,7 @@ const Tile: React.FC<TileProps> =({ tile, isFlipped, gridSize }) => {
   })
   const dispatch = useAppDispatch()
 
-  const flippedTiles = useAppSelector( state => state.memo.flippedTiles)
-  const correctTiles = useAppSelector(state => state.memo.correctTiles)
+
 
   function updateFlippedTiles() {
     console.log({flippedTiles})
@@ -54,13 +56,21 @@ const Tile: React.FC<TileProps> =({ tile, isFlipped, gridSize }) => {
   function compareTiles(a: number, b:number) {
     return a === b
   }
+  
+  function handleTileClick () {
+    isFlipped
+      ? correctTiles.includes(tile.id)
+        ? null
+        : dispatch(removeFromFlippedTiles(tile.individualKey))
+      : updateFlippedTiles()
+  }
 
   return (
     <>
       <div
         key={tile.individualKey}
         className="tile"
-        onClick={() => isFlipped? null : updateFlippedTiles()}
+        onClick={handleTileClick}
         id={tile.id.toString()}
         style={{ width: `${ 100/gridSize - 5 }vw`}}
       >

@@ -1,13 +1,19 @@
 import { v4 as uuidv4 } from 'uuid';
-export default function NewGameButton({ newGame, setGridSize, setIsLoading }) {
+import { useAppDispatch } from '../redux/hooks';
+import { changeGameLoadingstatus, changeGridSize } from '../redux/memoSlice';
+import { GRID_SIZES } from '../ENUMS';
+
+export default function NewGameButton({ newGame }) {
+
+  const dispatch = useAppDispatch()
+  const gridSizes = GRID_SIZES
 
   function startGameWithCustomSize(size: number){
-    setIsLoading(true)
-    setGridSize(size)
+    dispatch(changeGameLoadingstatus(true))
+    dispatch(changeGridSize(size))
     newGame(size)
   }
 
-  const gridSizes = [2, 4, 5, 6, 7]
   return (
     <>
       <h1> Choose size: </h1>

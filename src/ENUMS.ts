@@ -123,4 +123,6 @@ export const iconsArray: string[] = [
   
     return hexColor;
   }
+
+  export const GRID_SIZES = [2, 4, 5, 6, 7]
   

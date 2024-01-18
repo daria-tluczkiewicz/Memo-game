@@ -4,13 +4,17 @@ import { PayloadAction, createSlice } from '@reduxjs/toolkit';
 interface MemoState {
   movesCount: number,
   flippedTiles: { id: number; key: string }[],
-  correctTiles: number[]
+  correctTiles: number[],
+  gridSize: number,
+  isGameLoading: boolean
 }
 
 const initialState: MemoState = {
   movesCount: 0,
   flippedTiles: [],
-  correctTiles: []
+  correctTiles: [],
+  gridSize: 4,
+  isGameLoading: false
 };
 
 
@@ -40,11 +44,21 @@ const memoSlice = createSlice({
     resetFlippedTiles: state => {
       state.flippedTiles = []
     },
+    removeFromFlippedTiles: (state, action: PayloadAction<string>) => {
+      const updatedTiles = state.flippedTiles.filter(tile => tile.key != action.payload)
+      state.flippedTiles = updatedTiles
+    },
     addCorrectTile: (state, action: PayloadAction<number>) => {
       state.correctTiles.push(action.payload)
     },
     resetCorrectTiles: state => {
       state.correctTiles = []
+    },
+    changeGridSize: (state, action: PayloadAction<number>) => {
+      state.gridSize = action.payload
+    },
+    changeGameLoadingstatus: (state, action: PayloadAction<boolean>) => {
+      state.isGameLoading = action.payload
     }
     },
   },
@@ -56,8 +70,10 @@ export const {
   addFlippedTile,
   clearAndAddNewTile,
   resetFlippedTiles,
+  removeFromFlippedTiles,
   addCorrectTile,
   resetCorrectTiles,
-
+  changeGridSize,
+  changeGameLoadingstatus
 } = memoSlice.actions
 export default memoSlice.reducer;
