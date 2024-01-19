@@ -26,7 +26,6 @@ const Tile: React.FC<TileProps> =({ tile, isFlipped }) => {
 
 
   function updateFlippedTiles() {
-    console.log({flippedTiles})
     
     const newFlippedTile = {
       id: tile.id,
@@ -49,7 +48,6 @@ const Tile: React.FC<TileProps> =({ tile, isFlipped }) => {
     }
 
     dispatch(addFlippedTile(newFlippedTile))
-
   }
 
 

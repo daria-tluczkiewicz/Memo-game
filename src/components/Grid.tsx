@@ -1,85 +1,77 @@
 import { useMemo, useEffect } from "react";
 import Tile from "./Tile";
 import { v4 as uuidv4 } from 'uuid';
-import {  useAppSelector } from "../redux/hooks"
+import {  useAppDispatch, useAppSelector } from "../redux/hooks"
+import { endGame } from "../redux/memoSlice";
 
 interface GridProps {
-  icons: { image: string; id: number }[];
   keys: string[],
-  setIsGameOver: React.Dispatch<React.SetStateAction<boolean>>
+}
+interface GridType {
+    image: string,
+    id: number,
+    individualKey: string
 }
 
-export default function Grid({ icons, keys, setIsGameOver}: GridProps) {
-
+export default function Grid({ keys }: GridProps) {
 
   const flippedTiles = useAppSelector( state => state.memo.flippedTiles)
   const correctTiles = useAppSelector( state => state.memo.correctTiles)
   const gridSize = useAppSelector(state => state.memo.gridSize)
-
-  console.log({gridSize})
+  const icons = useAppSelector(state => state.memo.icons)
+  const dispatch = useAppDispatch()
 
   useEffect(()=> {
-    if (correctTiles.length - 1 === icons.length - 1) {
-     setTimeout(() => setIsGameOver(true), 800) 
+    if (correctTiles.length - 1 === icons.length / 2 - 1) {
+     setTimeout(() => dispatch(endGame()), 800) 
   }
-  },[correctTiles.length, setIsGameOver, icons.length])
+  },[correctTiles.length, icons.length, dispatch])
 
- 
-  const createGrid: () => [{ 
-    image: string,
-    id: number,
-    individualKey: string
-  }[]] = () => {
-    const grid: [{ 
-      image: string,
-      id: number,
-      individualKey: string
-    }[]] = [[]]
-    const fullicons = icons.concat(icons)
 
-    
+  const createGrid: () => [GridType[]] = () => {
+
+    const grid: [GridType[]] = [[]]
+
+    const iconsCopy = [...icons]
 
     for (let x = 0; x < gridSize; x++) {
-      const row: {
-        image: string,
-        id: number,
-        individualKey: string,
-      }[] = []
+      const row: GridType[] = []
       
       for (let y = 0; y < gridSize; y++) {
-        const index: number = Math.floor(Math.random() * fullicons.length);
-        const tileId = fullicons[index].id;
+
+        const index: number = randomNumberFromRange(0, iconsCopy.length - 1)
+        const tileId = iconsCopy[index].id
         const individualKey: string = uuidv4()
+
         row.push({
-          image: fullicons[index].image,
+          image: iconsCopy[index].image,
           id: tileId,
           individualKey: individualKey,
-        });
-        fullicons.splice(index, 1);
+        })
+
+        iconsCopy.splice(index, 1)
       }
       if (x === 0) {
         grid[0] = row
       } else {
-        grid.push(row);
-
+        grid.push(row)
       }
     }
     return grid
   }
+
+  function randomNumberFromRange(min: number, max: number) {
+    min = Math.ceil(min);
+    max = Math.floor(max);
+    return Math.floor(Math.random() * (max - min + 1)) + min;
+}
   
   const grid = useMemo(createGrid, [icons, gridSize])
-
-  
-  
 
   const isAlreadyFlipped = (tileKey: string): boolean => {
     return flippedTiles.some(tile => tile.key === tileKey)
   };
   
-
-
-  
-
   return (
     <>
       {grid.map((icons, index) => (

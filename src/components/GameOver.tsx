@@ -1,8 +1,15 @@
 
-import { useAppSelector } from "../redux/hooks"
+import { useAppDispatch, useAppSelector } from "../redux/hooks"
+import { resetIcons, startGame } from "../redux/memoSlice"
 
-export default function GameOver({ newGame }) {
+export default function GameOver() {
 
+  const dispatch = useAppDispatch()
+
+  const newGame = () => {
+    dispatch(resetIcons())
+    dispatch(startGame())
+  }
   const movesCount: number = useAppSelector(state => state.memo.movesCount)
   return (
     <>

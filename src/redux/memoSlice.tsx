@@ -1,20 +1,25 @@
 
 import { PayloadAction, createSlice } from '@reduxjs/toolkit';
+import { fetchNewIcons } from './asyncThunk';
 
 interface MemoState {
+  icons: { image: string, id: number }[],
   movesCount: number,
   flippedTiles: { id: number; key: string }[],
   correctTiles: number[],
   gridSize: number,
-  isGameLoading: boolean
+  isGameLoading: boolean,
+  isGameOver: boolean
 }
 
 const initialState: MemoState = {
+  icons: [],
   movesCount: 0,
   flippedTiles: [],
   correctTiles: [],
   gridSize: 4,
-  isGameLoading: false
+  isGameLoading: false,
+  isGameOver: false
 };
 
 
@@ -59,10 +64,33 @@ const memoSlice = createSlice({
     },
     changeGameLoadingstatus: (state, action: PayloadAction<boolean>) => {
       state.isGameLoading = action.payload
+    },
+    endGame: state => {
+      state.isGameOver = true
+    },
+    startGame: state => {
+      state.isGameOver = false
+    },
+    resetIcons: state => {
+      state.icons = []
     }
     },
+    extraReducers: (builder) => {
+      builder.addCase(fetchNewIcons.fulfilled, (state, action) => {
+        state.icons = action.payload
+        state.isGameLoading = initialState.isGameLoading
+        state.movesCount = initialState.movesCount
+        state.flippedTiles = initialState.flippedTiles
+        state.correctTiles = initialState.correctTiles
+      }),
+      builder.addCase(fetchNewIcons.rejected, action => {
+        console.error(action);
+      });
+    }
   },
 );
+
+
 
 export const { 
   incrementMovesCount, 
@@ -74,6 +102,9 @@ export const {
   addCorrectTile,
   resetCorrectTiles,
   changeGridSize,
-  changeGameLoadingstatus
+  changeGameLoadingstatus,
+  endGame,
+  startGame,
+  resetIcons
 } = memoSlice.actions
 export default memoSlice.reducer;
