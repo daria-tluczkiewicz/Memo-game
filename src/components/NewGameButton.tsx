@@ -7,7 +7,6 @@ import { changeGridSize } from '../redux/memoSlice';
 export default function NewGameButton() {
 
   const dispatch = useAppDispatch()
-  const gridSizes = GRID_SIZES
 
   
   const newGame = (size: number) => {
@@ -19,7 +18,7 @@ export default function NewGameButton() {
     <>
       <h1> Choose size: </h1>
       <div className="select-grid-size">
-        {gridSizes.map(size => (
+        {GRID_SIZES.map(size => (
           <button key={uuidv4()} onClick={()=>newGame(size)}>{size} X {size}</button>
         ))}
       </div>

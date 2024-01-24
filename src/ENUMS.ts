@@ -116,6 +116,36 @@ export const iconsArray: string[] = [
     'search'
   ];
 
+ export const COLORS = [
+  '133695',
+  '2964e6',
+  '35a5da',
+  '05a1b1',
+  '016b77',
+  '304d67',
+  '07bc80',
+  '059a30',
+  '30674c',
+  '017321',
+  '679105',
+  '8bc20c',
+  'e4ca02',
+  'c99617',
+  '988101',
+  '675130',
+  'e48802',
+  'e45145',
+  'a54016',
+  'cf1809',
+  'd11e73',
+  '9a3967',
+  '7d2947',
+  '870c77',
+  '8d18b9',
+  '6d2fde',
+  '460ead'
+ ]
+
   
   export function hexColor() {
     const randomColor = Math.floor(Math.random() * 16777215).toString(16);
@@ -124,5 +154,6 @@ export const iconsArray: string[] = [
     return hexColor;
   }
 
-  export const GRID_SIZES = [2, 4, 5, 6, 7]
+  export const GRID_SIZES = [2, 4, 6, 8]
+  
   

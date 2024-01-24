@@ -20,17 +20,18 @@ body {
   line-height: 1.5;
   font-weight: 400;
   color: rgba(255, 255, 255, 0.87);
-  background-color: #242424;
+  background-color: #090c1e;
 }
 
 
 
 h1 {
-  font-size: 3.2em;
+  font-size: 48px;
   line-height: 1.1;
 }
 
 button {
+  background-color: #1e2652;
   color: inherit;
   border-radius: 8px;
   border: 1px solid transparent;
@@ -38,7 +39,6 @@ button {
   font-size: 1em;
   font-weight: 500;
   font-family: inherit;
-  background-color: #1a1a1a;
   cursor: pointer;
   transition: border-color 0.25s;
 
@@ -115,7 +115,8 @@ button {
     }
     
     .tile-front {
-      background-color: rgb(255, 255, 255);
+      background-image: url('./img/tilecover.jpeg');
+      background-size: cover;
       transform: rotateY(0deg);
     }
 
