@@ -1,39 +1,31 @@
-import { createAsyncThunk } from "@reduxjs/toolkit"
-import { COLORS, iconsArray } from "../ENUMS"
-import axios from "axios"
+import { Avatar } from '@dicebear/core';
+import lorelei from '@dicebear/styles/lorelei.json';
+import { createAsyncThunk } from "@reduxjs/toolkit";
+import { v4 as uuidv4 } from 'uuid';
+import { COLORS } from "../ENUMS";
+
+export type iconType = {
+  id: string
+  imageSource: ImageSource,
+}
+export type ImageSource = string
 
 
-export const fetchNewIcons = createAsyncThunk(
+
+export const fetchNewIcons = createAsyncThunk<iconType, { size: number }>(
   'memo/fetchNewIcons',
-  async (size: number, thunkAPI) => {
-    try {
-      const icons: {image: string, id: number}[] = []
-      const usedIcons: number[] = []
-
-      for (let i = 0; i < size * size / 2; i++) {
-
-        const findNewIndex: () => number = () => {
-         const index = Math.floor(Math.random() * iconsArray.length)
-
-         if (usedIcons.includes(index)) {
-           return findNewIndex()
-         }
-        usedIcons.push(index)
-        return index
-        
-        }
-
-        const iconIndex = findNewIndex()
-        const iconColor: string = COLORS[Math.floor(Math.random() * COLORS.length)]
-
-        const response = await axios.get(`https://api.dicebear.com/7.x/icons/svg?backgroundColor=${iconColor}&icon=${iconsArray[iconIndex]}`)
-        
-        const imgPath = response.data
-        icons.push({ image: imgPath, id: iconIndex})
-      }
-      return [...icons, ...icons]
-    } catch (error) {
-      return thunkAPI.rejectWithValue(error)
+  async (size: number) => {
+    function generateAvatars(colors: string[]) {
+      return colors.slice(0, size).map((color, idx) => {
+        const avatar = new Avatar(lorelei,
+          { seed: color, backgroundColor: [color], size: 128, });
+        return {
+          id: uuidv4(),
+          imageSource: avatar.toDataUri()[idx]
+        } as iconType;
+      });
     }
+    const avatars = generateAvatars(COLORS)
+    return avatars
   }
 )

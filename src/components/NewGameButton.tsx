@@ -1,25 +1,15 @@
-import { v4 as uuidv4 } from 'uuid';
-import { useAppDispatch } from '../redux/hooks';
+import { useMemoGame } from '@/hooks/useGame';
 import { GRID_SIZES } from '../ENUMS';
-import { fetchNewIcons } from '../redux/asyncThunk';
-import { changeGridSize } from '../redux/memoSlice';
 
 export default function NewGameButton() {
-
-  const dispatch = useAppDispatch()
-
-  
-  const newGame = (size: number) => {
-    dispatch(changeGridSize(size))
-    dispatch(fetchNewIcons(size))
-  }
+  const { startGame } = useMemoGame()
 
   return (
     <>
       <h1> Choose size: </h1>
       <div className="select-grid-size">
-        {GRID_SIZES.map(size => (
-          <button key={uuidv4()} onClick={()=>newGame(size)}>{size} X {size}</button>
+        {GRID_SIZES.map(({ id, value }) => (
+          <button key={id} onClick={() => startGame(value)}>{value} X {value}</button>
         ))}
       </div>
     </>

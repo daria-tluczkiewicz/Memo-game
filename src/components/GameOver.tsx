@@ -1,5 +1,5 @@
 
-import { useAppDispatch, useAppSelector } from "../redux/hooks"
+import { useAppDispatch, useAppSelector } from "@app/store"
 import { resetIcons, startGame } from "../redux/memoSlice"
 
 export default function GameOver() {
