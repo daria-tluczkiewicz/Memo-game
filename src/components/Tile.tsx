@@ -1,19 +1,16 @@
-import { TileType } from "@/utils/generateGrid";
-import { useAppDispatch, useAppSelector } from "@app/store";
+import { useAppSelector } from "@app/store";
+import { TileType } from "@features/game-management/memoSlice";
 import { animated, useSpring } from "@react-spring/web";
-import { addCorrectTile, addFlippedTile, clearAndAddNewTile, incrementMovesCount, removeFromFlippedTiles } from "../redux/memoSlice";
+import { memo } from "react";
 
-
-
-const Tile = ({ tile, isFlipped }: {
+const Tile = ({ tile, isFlipped, onClick }: {
   tile: TileType,
   isFlipped: boolean,
+  onClick: () => void
 }) => {
 
-  const flippedTiles = useAppSelector(state => state.memo.flippedTiles)
-  const correctTiles = useAppSelector(state => state.memo.correctTiles)
   const gridSize = useAppSelector(state => state.memo.gridSize)
-  const { id: tileId } = tile
+  const { id: tileId, imageSource } = tile
 
   const { transform } = useSpring({
     transform: `perspective(600px) rotateY(${isFlipped ? 180 : 0}deg)`,
@@ -23,44 +20,14 @@ const Tile = ({ tile, isFlipped }: {
     backTransform: `perspective(600px) rotateY(${isFlipped ? 0 : -180}deg)`,
     config: { duration: 500 },
   })
-  const dispatch = useAppDispatch()
-
-
-
-  function updateFlippedTiles() {
-
-    if (flippedTiles.length === 2) {
-      dispatch(clearAndAddNewTile(tileId))
-      return
-    }
-    if (flippedTiles.length === 1) {
-      dispatch(incrementMovesCount())
-      dispatch(addFlippedTile(tileId))
-
-      flippedTiles[0] === tileId && !correctTiles.includes(tileId)
-        ? dispatch(addCorrectTile(tileId))
-        : null
-      return
-    }
-
-    dispatch(addFlippedTile(tileId))
-  }
-
-  function handleTileClick() {
-    isFlipped
-      ? correctTiles.includes(tile.id)
-        ? null
-        : dispatch(removeFromFlippedTiles(tile.id))
-      : updateFlippedTiles()
-  }
 
   return (
     <>
       <div
-        key={tile.id}
+        key={tileId}
         className="tile"
-        onClick={handleTileClick}
-        id={tile.id.toString()}
+        onClick={onClick}
+        id={tileId}
         style={{ width: `${100 / gridSize - 5}vw` }}
       >
         <animated.div
@@ -71,7 +38,7 @@ const Tile = ({ tile, isFlipped }: {
         />
         <animated.img
           className="tile-back"
-          src={tile.imageSource}
+          src={imageSource}
           style={{
             transform: backTransform,
           }}
@@ -81,4 +48,4 @@ const Tile = ({ tile, isFlipped }: {
   );
 }
 
-export default Tile
+export default memo(Tile)

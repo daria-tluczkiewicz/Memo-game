@@ -1,5 +1,5 @@
 import { useMemoGame } from '@/hooks/useGame';
-import { GRID_SIZES } from '../ENUMS';
+import { GRID_SIZES } from '../constants';
 
 export default function NewGameButton() {
   const { startGame } = useMemoGame()

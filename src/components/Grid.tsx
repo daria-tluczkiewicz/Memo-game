@@ -1,31 +1,18 @@
-import { generateGrid } from '@/utils/generateGrid';
-import { useAppDispatch, useAppSelector } from '@app/store';
-import { useEffect } from "react";
-import { endGame } from "../redux/memoSlice";
+import { useAppSelector } from '@app/store';
+import { useMemoGame } from '@hooks/useGame';
+import { generateGrid } from '@utils/generateGrid';
+import { useMemo } from "react";
 import Tile from "./Tile";
-
-
 
 export default function Grid() {
 
+  const matchedTiles = useAppSelector(state => state.memo.matchedTiles)
   const flippedTiles = useAppSelector(state => state.memo.flippedTiles)
-  const correctTiles = useAppSelector(state => state.memo.correctTiles)
+  const flippedTilesIds = flippedTiles.map(tile => tile.id)
   const gridSize = useAppSelector(state => state.memo.gridSize)
   const icons = useAppSelector(state => state.memo.icons)
-  const dispatch = useAppDispatch()
-
-  useEffect(() => {
-    if (correctTiles.length - 1 === icons.length / 2 - 1) {
-      setTimeout(() => dispatch(endGame()), 800)
-    }
-  }, [correctTiles.length, icons.length, dispatch])
-
-  const grid = generateGrid({ icons })
-
-  const isAlreadyFlipped = (tileKey: string): boolean => {
-    return flippedTiles.some(tileId => tileId === tileKey)
-  };
-  console.log({ grid })
+  const grid = useMemo(() => generateGrid({ icons }), [icons])
+  const { handleTileClick } = useMemoGame()
 
   return (
     <div className='icon-grid' style={{ '--grid-size': gridSize } as React.CSSProperties}>
@@ -33,11 +20,8 @@ export default function Grid() {
         <Tile
           key={tile.id}
           tile={tile}
-          isFlipped={
-            correctTiles.includes(tile.iconId) || isAlreadyFlipped(tile.id)
-              ? true
-              : false
-          }
+          isFlipped={matchedTiles.includes(tile.iconId) || flippedTilesIds.includes(tile.id)}
+          onClick={() => handleTileClick(tile)}
         />
       ))}
     </div>

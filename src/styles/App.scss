@@ -25,8 +25,6 @@ body {
   background-color: #090c1e;
 }
 
-
-
 h1 {
   font-size: 48px;
   line-height: 1.1;
@@ -72,6 +70,19 @@ button {
   flex-direction: column;
   max-width: 1200px;
 
+  .game-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+
+    .restart-button {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+  }
+
   .progress {
     text-align: center;
     font-size: 24px;
@@ -97,6 +108,9 @@ button {
   aspect-ratio: 1;
   position: relative;
   perspective: 1000px;
+  border-radius: 8px;
+  overflow: hidden;
+
 
   &:hover {
     transform: scale(1.05);

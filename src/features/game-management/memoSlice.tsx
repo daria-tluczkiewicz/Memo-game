@@ -1,33 +1,46 @@
 
+import { GAME_STATUS } from '@/constants';
 import { PayloadAction, createSlice } from '@reduxjs/toolkit';
 
 export type iconType = {
-  id: string
+  id: iconId
   imageSource: ImageSource,
 }
 export type ImageSource = string
 
+export type tileId = string
+export type iconId = string
+
 export type gridSizeType = 2 | 4 | 6 | 8
+
+export type TileType = {
+  id: tileId,
+  iconId: iconId
+  imageSource: string,
+}
+export type GridType = TileType[];
+
+export type GameStatus = `${GAME_STATUS}`;
 
 
 interface MemoState {
   icons: iconType[],
   movesCount: number,
-  flippedTiles: string[],
-  correctTiles: string[],
+  flippedTiles: TileType[],
+  matchedTiles: iconId[],
   gridSize: gridSizeType,
   isGameLoading: boolean,
-  isGameOver: boolean
+  gameStatus: GameStatus,
 }
 
 const initialState: MemoState = {
   icons: [],
   movesCount: 0,
   flippedTiles: [],
-  correctTiles: [],
+  matchedTiles: [],
   gridSize: 4,
   isGameLoading: false,
-  isGameOver: false
+  gameStatus: GAME_STATUS.NOT_STARTED
 };
 
 
@@ -41,25 +54,25 @@ const memoSlice = createSlice({
     resetMoves: state => {
       state.movesCount = 0
     },
-    addFlippedTile: (state, action: PayloadAction<string>) => {
+    addFlippedTile: (state, action: PayloadAction<TileType>) => {
 
       state.flippedTiles.push(action.payload)
     },
-    clearAndAddNewTile: (state, action: PayloadAction<string>) => {
+    resetAndAddNewTile: (state, action: PayloadAction<TileType>) => {
       state.flippedTiles = [action.payload]
     },
     resetFlippedTiles: state => {
       state.flippedTiles = []
     },
-    removeFromFlippedTiles: (state, action: PayloadAction<string>) => {
-      const updatedTiles = state.flippedTiles.filter(tileId => tileId != action.payload)
+    removeFromFlippedTiles: (state, action: PayloadAction<tileId>) => {
+      const updatedTiles = state.flippedTiles.filter(tile => tile.id != action.payload)
       state.flippedTiles = updatedTiles
     },
-    addCorrectTile: (state, action: PayloadAction<string>) => {
-      state.correctTiles.push(action.payload)
+    addMatchingTile: (state, action: PayloadAction<iconId>) => {
+      state.matchedTiles.push(action.payload)
     },
-    resetCorrectTiles: state => {
-      state.correctTiles = []
+    resetMatchingTiles: state => {
+      state.matchedTiles = []
     },
     changeGridSize: (state, action: PayloadAction<gridSizeType>) => {
       state.gridSize = action.payload
@@ -67,11 +80,8 @@ const memoSlice = createSlice({
     changeGameLoadingstatus: (state, action: PayloadAction<boolean>) => {
       state.isGameLoading = action.payload
     },
-    endGame: state => {
-      state.isGameOver = true
-    },
-    startGame: state => {
-      state.isGameOver = false
+    changeGameStatus: (state, action: PayloadAction<GameStatus>) => {
+      state.gameStatus = action.payload
     },
     setIcons: (state, action: PayloadAction<iconType[]>) => {
       state.icons = action.payload
@@ -89,15 +99,14 @@ export const {
   incrementMovesCount,
   resetMoves,
   addFlippedTile,
-  clearAndAddNewTile,
+  resetAndAddNewTile,
   resetFlippedTiles,
   removeFromFlippedTiles,
-  addCorrectTile,
-  resetCorrectTiles,
+  addMatchingTile,
+  resetMatchingTiles,
   changeGridSize,
   changeGameLoadingstatus,
-  endGame,
-  startGame,
+  changeGameStatus,
   setIcons,
   resetIcons
 } = memoSlice.actions

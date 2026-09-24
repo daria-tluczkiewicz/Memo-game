@@ -1,4 +1,5 @@
 import { v4 as uuidv4 } from 'uuid';
+import { gridSizeType } from './features/game-management/memoSlice';
 
 export const iconsArray: string[] = [
   'alarm',
@@ -148,22 +149,30 @@ export const COLORS = [
   '460ead'
 ]
 
-export const GRID_SIZES = [
-  {
-    id: uuidv4(),
-    value: 2
-  },
-  {
-    id: uuidv4(),
-    value: 4
-  },
-  {
-    id: uuidv4(),
-    value: 6
-  },
-  {
-    id: uuidv4(),
-    value: 8
-  }
-]
+export const GRID_SIZES: {
+  id: string;
+  value: gridSizeType
+}[] = [
+    {
+      id: uuidv4(),
+      value: 2
+    },
+    {
+      id: uuidv4(),
+      value: 4
+    },
+    {
+      id: uuidv4(),
+      value: 6
+    },
+    {
+      id: uuidv4(),
+      value: 8
+    }
+  ]
 
+export enum GAME_STATUS {
+  NOT_STARTED = 'not-started',
+  IN_PROGRESS = 'in-progress',
+  COMPLETED = 'completed'
+}
