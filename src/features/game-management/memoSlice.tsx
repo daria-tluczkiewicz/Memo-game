@@ -23,7 +23,7 @@ export type GridType = TileType[];
 export type GameStatus = `${GAME_STATUS}`;
 
 
-interface MemoState {
+export interface MemoState {
   icons: iconType[],
   movesCount: number,
   flippedTiles: TileType[],
