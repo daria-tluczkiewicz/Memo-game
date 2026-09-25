@@ -3,8 +3,8 @@ import path from 'path';
 import { defineConfig } from 'vite';
 import svgr from 'vite-plugin-svgr';
 
-export default defineConfig({
-  base: "/",
+export default defineConfig(({ mode }) => ({
+  base: mode === 'github-pages' ? '/Memo-game/' : '/',
   plugins: [
     react(),
     svgr()
@@ -26,4 +26,4 @@ export default defineConfig({
       '@utils': path.resolve(import.meta.dirname, './src/utils'),
     },
   },
-})
+}))
