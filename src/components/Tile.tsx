@@ -1,18 +1,17 @@
-import { animated, useSpring } from "@react-spring/web"
-import { addCorrectTile, addFlippedTile, clearAndAddNewTile, incrementMovesCount, removeFromFlippedTiles } from "../redux/memoSlice";
-import { useAppDispatch, useAppSelector } from "../redux/hooks";
+import { useAppSelector } from "@app/store";
+import { TileType } from "@features/game-management/memoSlice";
+import { animated, useSpring } from "@react-spring/web";
+import { memo } from "react";
 
-interface TileProps {
-  tile: { image: string; id: number; individualKey: string },
+const Tile = ({ tile, isFlipped, onClick }: {
+  tile: TileType,
   isFlipped: boolean,
-}
+  onClick: () => void
+}) => {
 
-const Tile: React.FC<TileProps> =({ tile, isFlipped }) => {
-
-  const flippedTiles = useAppSelector( state => state.memo.flippedTiles)
-  const correctTiles = useAppSelector(state => state.memo.correctTiles)
   const gridSize = useAppSelector(state => state.memo.gridSize)
-  
+  const { id: tileId, imageSource } = tile
+
   const { transform } = useSpring({
     transform: `perspective(600px) rotateY(${isFlipped ? 180 : 0}deg)`,
     config: { duration: 500 },
@@ -21,56 +20,15 @@ const Tile: React.FC<TileProps> =({ tile, isFlipped }) => {
     backTransform: `perspective(600px) rotateY(${isFlipped ? 0 : -180}deg)`,
     config: { duration: 500 },
   })
-  const dispatch = useAppDispatch()
-
-
-
-  function updateFlippedTiles() {
-    
-    const newFlippedTile = {
-      id: tile.id,
-      key: tile.individualKey
-    }
-
-    if (flippedTiles.length === 2 ) {
-      dispatch(clearAndAddNewTile(newFlippedTile))
-      return
-    }
-    if (flippedTiles.length === 1) {
-      dispatch(incrementMovesCount())
-      dispatch(addFlippedTile(newFlippedTile))
-
-      compareTiles(flippedTiles[0].id, newFlippedTile.id) &&
-      !correctTiles.includes(newFlippedTile.id)
-        ? dispatch(addCorrectTile(newFlippedTile.id))
-        : null
-      return
-    }
-
-    dispatch(addFlippedTile(newFlippedTile))
-  }
-
-
-  function compareTiles(a: number, b:number) {
-    return a === b
-  }
-  
-  function handleTileClick () {
-    isFlipped
-      ? correctTiles.includes(tile.id)
-        ? null
-        : dispatch(removeFromFlippedTiles(tile.individualKey))
-      : updateFlippedTiles()
-  }
 
   return (
     <>
       <div
-        key={tile.individualKey}
+        key={tileId}
         className="tile"
-        onClick={handleTileClick}
-        id={tile.id.toString()}
-        style={{ width: `${ 100/gridSize - 5 }vw`}}
+        onClick={onClick}
+        id={tileId}
+        style={{ width: `${100 / gridSize - 5}vw` }}
       >
         <animated.div
           className="tile-front"
@@ -78,9 +36,9 @@ const Tile: React.FC<TileProps> =({ tile, isFlipped }) => {
             transform: transform,
           }}
         />
-        <animated.div
+        <animated.img
           className="tile-back"
-          dangerouslySetInnerHTML={{ __html: tile.image }}
+          src={imageSource}
           style={{
             transform: backTransform,
           }}
@@ -90,4 +48,4 @@ const Tile: React.FC<TileProps> =({ tile, isFlipped }) => {
   );
 }
 
-export default Tile
+export default memo(Tile)

@@ -1,11 +1,13 @@
 * {
   box-sizing: border-box;
 }
+
 html,
 body {
   width: 100%;
   height: 100%
 }
+
 body {
   padding: 2vw;
   margin: 0;
@@ -22,8 +24,6 @@ body {
   color: rgba(255, 255, 255, 0.87);
   background-color: #090c1e;
 }
-
-
 
 h1 {
   font-size: 48px;
@@ -55,7 +55,7 @@ button {
     font-weight: 500;
     color: #646cff;
     text-decoration: inherit;
-    
+
     &:hover {
       color: #535bf2;
     }
@@ -70,6 +70,19 @@ button {
   flex-direction: column;
   max-width: 1200px;
 
+  .game-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+
+    .restart-button {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+  }
+
   .progress {
     text-align: center;
     font-size: 24px;
@@ -77,53 +90,54 @@ button {
     transition: cubic-bezier(0.075, 0.82, 0.165, 1);
   }
 
-  &, .vertical-container{
-    gap: 2vw;
+  .icon-grid {
+    display: grid;
+    grid-template-columns: repeat(var(--grid-size), minmax(0, 120px));
+    grid-template-rows: repeat(var(--grid-size), minmax(0, 120px));
+    gap: 1vw;
+    justify-content: center;
+    align-content: center;
+
+    width: 80vh;
+    height: 80vh;
   }
 }
 
+.tile {
+  max-width: 100%;
+  aspect-ratio: 1;
+  position: relative;
+  perspective: 1000px;
+  border-radius: 8px;
+  overflow: hidden;
 
-.vertical-container {
-  display: flex;
-  justify-content: stretch;
-  align-items: center;
-  height: 100%;
-  list-style-type: none;
 
-  .tile {
-    max-width: 120px;
-    max-height: 120px;
-    border-radius: 10%;
-    aspect-ratio: 1 / 1;
-    position: relative;
-    perspective: 1000px;
+  &:hover {
+    transform: scale(1.05);
+    transition: cubic-bezier(0.075, 0.82, 0.165, 1);
+  }
 
-    &:hover {
-      transform: scale(1.05);
-      transition: cubic-bezier(0.075, 0.82, 0.165, 1);
-    }
+  .tile-front,
+  .tile-back {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 100%;
+    transition: transform 0.2s;
+    backface-visibility: hidden;
+    border-radius: inherit;
+  }
 
-    .tile-front, .tile-back {
-      position: absolute;
-      top: 0;
-      left: 0;
-      height: 100%;
-      width: 100%;
-      transition: transform 0.2s;
-      backface-visibility: hidden;
-      border-radius: inherit;
-    }
-    
-    .tile-front {
-      background-image: url('./img/tilecover.jpeg');
-      background-size: cover;
-      transform: rotateY(0deg);
-    }
+  .tile-front {
+    background-image: url('../assets/tilecover.jpeg');
+    background-size: cover;
+    transform: rotateY(0deg);
+  }
 
-    .tile-back {
-      transform: rotateY(180deg);
-      overflow: hidden;
-    }
+  .tile-back {
+    transform: rotateY(180deg);
+    overflow: hidden;
   }
 }
 
@@ -132,7 +146,7 @@ button {
   height: 140px;
 }
 
-.moving-square{
+.moving-square {
   height: 70px;
   width: 70px;
   border-radius: 4px;
@@ -148,10 +162,12 @@ button {
     background-color: #6ab43e;
     transform: translate(100%, 0) rotateY(-180deg) rotateX(0);
   }
+
   50% {
     background-color: #e89d41;
     transform: translate(100%, 100%) rotateY(-180deg) rotateX(-180deg);
   }
+
   75% {
     background-color: #fd4084;
     transform: translate(0, 100%) rotateY(0deg) rotateX(-180deg);

@@ -1,5 +1,5 @@
 
-import { useAppSelector } from "../redux/hooks"
+import { useAppSelector } from "@app/store"
 
 
 export default function Progress() {
