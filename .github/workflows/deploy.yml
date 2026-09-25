@@ -3,7 +3,11 @@ name: Deploy to GitHub Pages
 on:
   pull_request:
     branches:
-    - main
+      - main
+
+  push:
+    branches:
+      - main
 
 permissions:
   contents: read
@@ -11,22 +15,46 @@ permissions:
   id-token: write
 
 jobs:
-  deploy:
+  test:
     runs-on: ubuntu-latest
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
+
     steps:
       - uses: actions/checkout@v4
+
       - uses: actions/setup-node@v4
         with:
           node-version: 20
+          cache: npm
+
       - run: npm ci
       - run: npm test
       - run: npm run build
+
+  deploy:
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    needs: test
+    runs-on: ubuntu-latest
+
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - run: npm ci
+      - run: npm run build
+
       - uses: actions/configure-pages@v5
+
       - uses: actions/upload-pages-artifact@v3
         with:
           path: ./dist
+
       - uses: actions/deploy-pages@v4
         id: deployment
